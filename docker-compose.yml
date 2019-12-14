@@ -4,14 +4,15 @@ services:
         image: mariadb
         container_name: "mariadb"
         ports:
-            - "3306:3306"
+            # only allow port 3306 access from localhost only
+            - "127.0.0.1:3306:3306"
         volumes:
             - "./db/mariadb:/var/lib/mysql:rw"
             - "./etc/mysql/:/etc/mysql/"
         environment:
             # ALLOW_EMPTY_PASSWORD is recommended only for development.
-            - "MYSQL_ALLOW_EMPTY_PASSWORD=yes"
-            - "MYSQL_USER=root"
+            # - "MYSQL_ALLOW_EMPTY_PASSWORD=yes"
+            - "MYSQL_ROOT_PASSWORD=12345"
             - "SET GLOBAL sql_mode =''"
         networks:
             - docker_webstack
@@ -41,6 +42,24 @@ services:
             - "./projects/:/var/www/projects"
         networks:
             - docker_webstack
+    php7.2.fpm:
+        build: php-stack-7.2-fpm
+        container_name: "php7.2.fpm"
+        restart: always
+        volumes:
+            - "./etc/php/php.ini:/usr/local/etc/php/conf.d/php.ini"
+            - "./projects/:/var/www/projects"
+        networks:
+            - docker_webstack
+    php7.3.fpm:
+        build: php-stack-7.3-fpm
+        container_name: "php7.3.fpm"
+        restart: always
+        volumes:
+            - "./etc/php/php.ini:/usr/local/etc/php/conf.d/php.ini"
+            - "./projects/:/var/www/projects"
+        networks:
+            - docker_webstack
     php5.fpm:
         build: php-stack-5.6.30-fpm
         container_name: "php5.fpm"
@@ -50,6 +69,42 @@ services:
             - "./projects/:/var/www/projects"
         networks:
             - docker_webstack
+    # elasticsearch:
+    #     build: elasticsearch
+    #     container_name: "elasticsearch"
+    #     ports:
+    #         - 9200:9200
+    #     volumes:
+    #         - "./projects/:/var/www/projects"
+    #     networks: 
+    #         - docker_webstack
+    # kibana:
+    #     image: docker.elastic.co/kibana/kibana:6.3.2
+    #     ports:
+    #         - "5601:5601"
+    #     networks: 
+    #         - docker_webstack
+    # oracle12:
+    #     build: oracle12
+    #     container_name: "oracle-12c"
+    #     # volumes:
+    #     #     - "./db/oracle:/var/lib/oracle/oradata:rw"
+    #     ports:
+    #         - 1521:1521
+    #         - 8080:8080
+    #     networks: 
+    #         - docker_webstack
+    # apache:
+    #     build: apache
+    #     depends_on:
+    #         - php7.3.fpm
+    #     container_name: apache_web
+    #     restart: always
+    #     ports:
+    #         - '80:8080'
+    #         - '443:8443'
+    #     networks: 
+    #         - docker_webstack
 networks:
     docker_webstack:
         driver: bridge

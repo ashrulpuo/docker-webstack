@@ -1,0 +1,3 @@
+FROM sath89/oracle-12c
+
+EXPOSE 8080 1521
