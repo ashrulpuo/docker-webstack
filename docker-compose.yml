@@ -13,7 +13,6 @@ services:
             # ALLOW_EMPTY_PASSWORD is recommended only for development.
             # - "MYSQL_ALLOW_EMPTY_PASSWORD=yes"
             - "MYSQL_ROOT_PASSWORD=12345"
-            - "SET GLOBAL sql_mode =''"
         networks:
             - docker_webstack
     nginx:
@@ -29,7 +28,6 @@ services:
             - "./projects/:/var/www/projects"
         depends_on:
             - php7.fpm
-            - php5.fpm
             - mariadb
         networks:
             - docker_webstack
@@ -54,15 +52,6 @@ services:
     php7.3.fpm:
         build: php-stack-7.3-fpm
         container_name: "php7.3.fpm"
-        restart: always
-        volumes:
-            - "./etc/php/php.ini:/usr/local/etc/php/conf.d/php.ini"
-            - "./projects/:/var/www/projects"
-        networks:
-            - docker_webstack
-    php5.fpm:
-        build: php-stack-5.6.30-fpm
-        container_name: "php5.fpm"
         restart: always
         volumes:
             - "./etc/php/php.ini:/usr/local/etc/php/conf.d/php.ini"
